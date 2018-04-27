@@ -409,6 +409,102 @@ void createInThread(TBTNode*root)
 	}
 }
 
+//遍历中序线索二叉树（先找出第一个结点，即左下角的结点，注意并不一定是叶结点）
+TBTNode*First(TBTNode*p)                                    //找出第一个结点
+{
+	while (p->ltag==0)
+	{
+		p = p->lchild;
+	}
+	return p;
+}
+TBTNode*Next(TBTNode*p)                                   //找出p结点的后继结点
+{
+	if (p->rtag == 0)
+	{
+		return First(p->rchild);
+	}
+	return p->rchild;
+}
+void visit2(TBTNode*p)
+{
+	printf("%d", p->data);
+}
+void Inorder(TBTNode*root) 
+{
+	TBTNode*p = First(root);
+	do
+	{
+		visit2(p);
+		p = Next(p);
+	} while (p);
+}
+
+//前序线索二叉树
+void preThread(TBTNode*p, TBTNode*&pre)
+{
+	if (p != NULL)
+	{
+		if (p->lchild==NULL)
+		{
+			p->ltag = 1;
+			p->lchild = pre;
+		}
+		if (pre!=NULL&&pre->rchild==NULL)
+		{
+			p->rtag = 1;
+			p->rchild = p;
+		}
+		pre = p;
+		if (p->ltag==0)
+		{
+			preThread(p->lchild, pre);
+		}
+		if (p->rtag==0)
+		{
+			preThread(p->rchild, pre);
+		}
+	}
+}
+void preorder(TBTNode*root)
+{
+	if (root != NULL)
+	{
+		TBTNode*p = root;
+		while (p)
+		{
+			while (p->ltag==0)                      //向左方向做循环
+			{
+				visit2(p);
+				p = p->lchild;
+			}
+			visit2(p);
+			p = p->rchild;                              //此时无论rtag为多少，都可以
+		}
+	}
+}
+
+//后序线索二叉树
+void postThread(TBTNode*p,TBTNode*&pre)
+{
+	if (p)
+	{
+		postThread(p->lchild, pre);
+		postThread(p->rchild, pre);
+		if (p->lchild == NULL)
+		{
+			p->ltag = 1;
+			p->lchild = pre;
+		}
+		if (pre&&pre->rchild==NULL)
+		{
+			p->rtag = 1;
+			p->rchild = p;
+		}
+		pre = p;
+	}
+}
+
 //测试代码
 int main()
 {
